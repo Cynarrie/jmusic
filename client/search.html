@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Music</title>
+
+    <!-- Sets initial viewport load and disables zooming  -->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+    <!-- Makes your prototype chrome-less once bookmarked to your phone's home screen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <!-- Include the compiled Ratchet CSS -->
+    <link href="css/ratchet.css" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <!-- Include the compiled Ratchet JS -->
+    <script src="js/ratchet.js"></script>
+    <script src="js/localforage.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    
+  </head>
+  <body>
+
+    <!-- Make sure all your bars are the first things in your <body> -->
+    <header class="bar bar-nav">
+      <h1 class="title">Search</h1>
+    </header>
+    <div class="content">
+   <br>
+    <input type="search" placeholder="Search" id="searchURL">
+    <button class="btn btn-positive btn-block" id="downloadBtn">Download</button>
+    
+    <div class="card">
+      <ul class="table-view" id="songList"></a>
+        
+      </ul>
+    </div>
+    </div>
+    
+    <!-- Wrap all non-bar HTML in the .content div (this is actually what scrolls) -->
+    <nav class="bar bar-tab">
+  <a class="tab-item " href="index.html" data-ignore="push">
+    <span class="icon icon-home"></span>
+    <span class="tab-label">Video</span>
+  </a>
+  <a class="tab-item" href="music.html" data-ignore="push">
+    <span class="icon icon-person"></span>
+    <span class="tab-label">Music</span>
+  </a>
+  <a class="tab-item active" href="#">
+    <span class="icon icon-search"></span>
+    <span class="tab-label">Search</span>
+  </a>
+  <a class="tab-item" href="#">
+    <span class="icon icon-gear"></span>
+    <span class="tab-label">Settings</span>
+  </a>
+</nav>
+
+  </body>
+  <script type="text/javascript">
+localforage.config({
+    driver: [localforage.INDEXEDDB,
+             localforage.WEBSQL],
+    name: 'cynary'
+    });
+
+var songlist = [];
+
+    var hiddenBox = $( "#banner-message" );
+    $( "#downloadBtn" ).on( "click", function( event ) {
+     download($('#searchURL').val())
+    });
+    
+    
+    var download = function(url) {
+      $.ajax({
+        url: "/tube?tb="+url,
+        progress:function() {
+          console.log("working");
+        },
+        success: function( result ) {
+          var num = Math.random();
+          
+          localforage.setItem(result.name, result.byte).then(function (value) {
+              // Do other things once the value has been saved.
+              console.log("done");
+              loadList(); 
+          }).catch(function(err) {
+              // This code runs if there were any errors
+              console.log(err);
+          });
+      }
+      });
+      
+    }  
+      
+      
+    var loadList = function() {
+      var li = document.getElementById("songList");
+
+      
+      localforage.keys().then(function(keys) {
+          
+          for (var i = 0; i < keys.length; i++) {
+              li.innerHTML += '<li class="table-view-cell">'+ keys[i]+ ' : ' +i+'</li>'
+          }
+
+          console.log(keys);
+      }).catch(function(err) {
+          // This code runs if there were any errors
+          console.log(err);
+      });
+      
+    }  
+    loadList();
+    </script>
+</html>
