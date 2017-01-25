@@ -23,7 +23,7 @@ var video = youtubedl(tb,
   // Optional arguments passed to youtube-dl.
   ['--format=18'],
   // Additional options can be given for calling `child_process.execFile()`.
-  { cwd: __dirname + '/client' });
+  { cwd: __dirname + '/client', maxBuffer: Infinity });
 
 // Will be called when the download starts.
 var num = Math.random();
