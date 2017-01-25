@@ -58,7 +58,8 @@
   </body>
   <script type="text/javascript">
     localforage.config({
-    driver: localforage.INDEXEDDB,
+    driver: [localforage.INDEXEDDB,
+             localforage.WEBSQL],
     name: 'cynary'
     });
       var changeSong = function(key) {
