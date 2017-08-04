@@ -17,6 +17,7 @@
     <!-- Include the compiled Ratchet JS -->
     <script src="js/ratchet.js"></script>
     <script src="js/localforage.min.js"></script>
+    <script src="js/fs.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     
   </head>
@@ -76,10 +77,20 @@ var songlist = [];
     
     var download = function(url) {
       $.ajax({
-        url: "/tube?tb="+url,
-        progress:function() {
-          console.log("working");
+        xhr: function() {
+        var xhr = new window.XMLHttpRequest();
+        xhr.addEventListener("progress", function(evt) {
+           if (evt.lengthComputable) {
+               var percentComplete = evt.loaded / evt.total;
+               $("#downloadBtn").html(percentComplete);
+               console.log(percentComplete);
+               //Do something with download progress
+           }
+        }, false);
+
+        return xhr;
         },
+        url: "/tube?tb="+url,
         success: function( result ) {
           var num = Math.random();
           
